@@ -5,8 +5,11 @@ import App from './App'
 import router from './router'
 import store from './store'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import moment from 'moment' // BIBLIOTECA PARA MANIPULAR DATAS
 
 Vue.config.productionTip = false
+
+Vue.prototype.$moment = moment; // DECLARANDO BIBLIOTECA PARA ACESSO GLOBAL NA APLICAÇÃO VUE
 
 /* eslint-disable no-new */
 new Vue({
