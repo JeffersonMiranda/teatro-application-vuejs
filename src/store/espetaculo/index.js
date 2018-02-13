@@ -16,6 +16,9 @@ export default {
         SET_ESPETACULO: (state, data) => {
             state.Espetaculo = data
         },
+        SET_RESERVAS: (state, data) => {
+            state.Espetaculo.reservas = data;
+        },
         ADD_RESERVA: (state, data) => { // ADICIONANDO A POLTRONA NA LISTA DE RESERVAS
             state.Espetaculo.reservas.push({
                 espetaculo: state.Espetaculo.id,
@@ -52,6 +55,9 @@ export default {
         Set_Espetaculo: ({ commit }, data) => {
             commit('SET_ESPETACULO', data);
         },
+        Set_Reservas: ({ commit }, data) => {
+            commit('SET_RESERVAS', data);
+        },
         InserirEspetaculo: ({ commit }, data) => { //SALVAR ESPETACULO NO BANCO DE DADOS
             return new Promise((resolve, reject) => {
                 http.post('/espetaculos/', data).then((response) => {
@@ -61,11 +67,29 @@ export default {
                 })
             })
         },
+        ModificarEspetaculo: ({ commit }, data) => {
+            return new Promise((resolve, reject) => {
+                http.put('/espetaculos/' + data.id + '/', data).then(response => {
+                    resolve(response);
+                }).catch(error => {
+                    reject(error);
+                })
+            })
+        },
+        ExcluirEspetaculo: ({ commit }, id) => {
+            return new Promise((resolve, reject) => {
+                http.delete('/espetaculos/' + id + '/').then(response => {
+                    resolve(response);
+                }).catch(error => {
+                    reject(error);
+                })
+            })
+        },
         AddReserva: ({ commit }, data) => {
             commit('ADD_RESERVA', data);
         },
-        RemoverReserva: ({commit},data)=>{
-            commit('REMOVER_RESERVA',data);
+        RemoverReserva: ({ commit }, data) => {
+            commit('REMOVER_RESERVA', data);
         }
     },
     getters: {
@@ -73,6 +97,11 @@ export default {
         getEspetaculo: (state) => state.Espetaculo,
         getEspetaculosListaPorId: (state) => (id) => {
             return state.EspetaculosLista.find(e => e.id == id)
-        }
+        },
+        getArrecadacaoTotal: (state) =>
+            state.EspetaculosLista.reduce((prevVal, elem) =>
+                prevVal + (elem.reservas.length * 23.76)
+                , 0)
+
     }
 }

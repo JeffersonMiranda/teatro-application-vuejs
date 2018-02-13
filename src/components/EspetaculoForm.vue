@@ -10,7 +10,7 @@
           
           <div class="col-md">
               <label>Data</label>
-              <input type="date" v-model="espetaculo.data">
+              <input type="date" v-model.lazy="espetaculo.data">
           </div>
 
           <div class="col-md">
@@ -25,7 +25,7 @@
       <div v-else class="row justify-content-md-center">
           <span> Salvando </span>
       </div>     
-{{ this.$store.getters.getEspetaculo }}
+
     </div>
 </template>
 
@@ -42,13 +42,6 @@ export default {
     ...mapGetters({
       espetaculo: "getEspetaculo"
     })
-  },
-  methods: {
-    FormatarData() {
-      // CONVERTENDO A DATA PARA O FORMATO BRASILEIRO
-      let d = this.$moment(this.espetaculo.data).format("DD/MM/YYYY");
-      this.espetaculo.data = d;
-    }
   }
 };
 </script>

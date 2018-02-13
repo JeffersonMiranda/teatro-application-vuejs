@@ -17,14 +17,14 @@
         <tr v-for="item in data">
           <td> {{ item.id }} </td>
           <td> {{ item.descricao }} </td>
-          <td> {{ item.data }} </td>
+          <td> {{ FormatarData(item.data) }} </td>
           <td> {{ item.hora }} </td>
           <td> {{ item.reservas.length }}  </td>
           <td> {{ 100 - item.reservas.length }}  </td>
-          <td> {{ (item.reservas.length * 23.76).toLocaleString() }}  </td>
+          <td> R$ {{ (item.reservas.length * 23.76).toLocaleString() }}  </td>
           <td>
           <button @click="EditarEspetaculo(item.id)">Editar</button>
-          <button>Remover</button>
+          <button @click="RemoverEspetaculo(item.id)">Remover</button>
           </td>
         </tr>
       </table>
@@ -47,11 +47,28 @@ export default {
     ...mapGetters(["getEspetaculosListaPorId"])
   },
   methods: {
-    ...mapActions(["Set_Espetaculo"]),
+    ...mapActions(["Set_Espetaculo", "ExcluirEspetaculo"]),
     EditarEspetaculo(id) {
       let e = this.getEspetaculosListaPorId(id); // BUSCANDO ESPETACULO A SER EDITADO
       this.Set_Espetaculo(e);
       this.$router.push("/modificar");
+    },
+    FormatarData(data) {
+      // CONVERTENDO A DATA PARA O FORMATO BRASILEIRO
+      let d = this.$moment(data).format("DD/MM/YYYY");
+      return d;
+    },
+    RemoverEspetaculo(id) {
+      this.ExcluirEspetaculo(id)
+        .then(response => {
+          if ((response.status = 204)) {
+            alert("Espetáculo removido com sucesso !");
+            this.$parent.GetEspetaculos();
+          }
+        })
+        .catch(error => {
+          alert(error);
+        });
     }
   }
 };

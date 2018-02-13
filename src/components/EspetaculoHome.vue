@@ -8,14 +8,20 @@
     <br>
     <br>
 
+      
+
     <div class="row justify-content-md-center">
       <div class="col-md-auto">
-        <div v-if="!espetaculosLoading">
+        <div v-if="!espetaculosLoading && getEspetaculosLista.length">
+            <span class="arrecadacao">Arrecadação total: R$ {{ this.getArrecadacaoTotal.toLocaleString() }}</span>   
             <espetaculo-tabela :data="getEspetaculosLista"></espetaculo-tabela>
         </div>
+        <div v-else-if="!espetaculosLoading && !getEspetaculosLista.length">
+            <span> Sem espetáculos cadastrados </span>
+        </div>   
         <div v-else>
             <span> Carregando </span>
-        </div>    
+          </div> 
       </div>
     </div>
 
@@ -33,12 +39,15 @@ export default {
   },
   data() {
     return {
-      espetaculosLista: [],
       espetaculosLoading: true
     };
   },
   computed: {
-    ...mapGetters(["getEspetaculosLista","getEspetaculo"])
+    ...mapGetters([
+      "getEspetaculosLista",
+      "getEspetaculo",
+      "getArrecadacaoTotal"
+    ])
   },
   methods: {
     ...mapActions([
@@ -46,39 +55,34 @@ export default {
       "Set_Espetaculo",
       "InserirEspetaculo"
     ]),
-    reset() {
-      // MÉTODO PARA RESETAR O FORMULÁRIO APÓS O ESPETÁCULO SER SALVO
-      Object.assign(this.$data, this.$options.data.call(this));
-    },
     GetEspetaculos() {
       // RECUPERAR TODOS OS ESPETÁCULOS DOS BANCO
       this.Set_Espetaculos_Lista()
-        .then(response => {
-          if (response.status == 200) {
-            this.espetaculosLoading = false;
-          }
-        })
+        .then()
         .catch(response => {
           alert(response.data.error);
+        })
+        .finally(() => {
+          this.espetaculosLoading = false;
         });
     },
     SalvarEspetaculo() {
       this.espetaculosSaving = true;
-      this.$refs.formulario.FormatarData(); // FORMATANDO A DATA ANTES DO ESPETÁCULO SER SALVO
 
       this.InserirEspetaculo(this.getEspetaculo)
         .then(response => {
           if (response.status == 201) {
-            alert("Espetáculo lançado com sucesso !");
-            this.Set_Espetaculo(response.data)
+            alert(
+              "Espetáculo lançado com sucesso ! Em seguida, insira as poltronas reservadas"
+            );
+            this.Set_Espetaculo(response.data);
             this.$router.push("/modificar");
           }
         })
-        .catch(response => {
-          alert(response.data.error);
+        .catch(error => {
+          alert(error);
         });
-      // this.espetaculosSaving = false;
-    }   
+    }
   },
   created() {
     this.GetEspetaculos();
@@ -87,5 +91,7 @@ export default {
 </script>
 
 <style scoped>
-
+.arrecadacao {
+  font-weight: bold;
+}
 </style>

@@ -20,7 +20,7 @@ export default {
                 });
             });
         },
-        ADD_POLTRONA: (state,poltrona)=>{ // ADICIONANDO POLTRONA NA LISTA DE RESERVAS
+        ADD_POLTRONA: (state, poltrona) => { // ADICIONANDO POLTRONA NA LISTA DE RESERVAS
             state.poltronasLista.push(poltrona)
         }
     },
@@ -38,8 +38,8 @@ export default {
         AttPoltronasDisponiveis: ({ commit }, data) => { // 
             commit('ATT_POLTRONAS_LISTA', data);
         },
-        AddPoltrona:({commit},data)=>{
-            commit('ADD_POLTRONA',data);
+        AddPoltrona: ({ commit }, data) => {
+            commit('ADD_POLTRONA', data);
         }
     },
     getters: {

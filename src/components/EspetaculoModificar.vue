@@ -1,15 +1,14 @@
 <template>
   <div>
-      <div class="row">
-          <div class="col-md">
-
+      <div class="row justify-content-start">
+          <div class="col-1 botaoVoltar">
+              <a @click.prevent="VoltarPaginaInicial" href="#"> Voltar </a>
           </div>
       </div>
 
       <espetaculo-form ref="formulario"> 
-          <button slot="botao">Salvar alterações</button>
-      </espetaculo-form>
-      
+          <button slot="botao" @click="SalvarAlteracoes">Salvar alterações</button>
+      </espetaculo-form>      
 
     <br>
 
@@ -71,11 +70,14 @@ export default {
   methods: {
     ...mapActions([
       "Set_Poltronas_Lista",
+      "Set_Espetaculo",
       "Set_Reservas_Por_Espetaculo",
       "AttPoltronasDisponiveis",
+      "Set_Reservas",
       "AddReserva",
       "RemoverReserva",
-      "AddPoltrona"
+      "AddPoltrona",
+      "ModificarEspetaculo"
     ]),
     changePoltronaSwitch(value) {
       this.poltronaSwitch = value;
@@ -89,7 +91,6 @@ export default {
       );
       // ADICIONANDO A POLTRONA NA LISTA DE RESERVAS
       this.AddReserva(this.poltronaSelecionada);
-
       this.poltronaSelecionada = null;
     },
     removerReserva() {
@@ -98,6 +99,20 @@ export default {
       // INSERINDO A POLTRONA NA LISTA DE DISPONÍVEIS
       this.AddPoltrona(this.reservaSelecionada.poltrona);
       this.reservaSelecionada = null;
+    },
+    SalvarAlteracoes() {
+      this.ModificarEspetaculo(this.espetaculo)
+        .then(response => {
+          alert("Espetáculo alterado com sucesso !");
+        })
+        .catch(error => {
+          alert(error);
+        });
+    },
+    VoltarPaginaInicial() {
+      this.$router.push({ path: "/" }, () => {
+        this.Set_Espetaculo({});
+      });
     }
   },
   created() {
@@ -110,7 +125,7 @@ export default {
     this.Set_Reservas_Por_Espetaculo(this.espetaculo.id)
       .then(response => {
         if (response.status == 200) {
-          this.espetaculo.reservas = this.reservasEspetaculo;
+          this.Set_Reservas(this.reservasEspetaculo);
           this.AttPoltronasDisponiveis(this.espetaculo.reservas);
         }
       })
